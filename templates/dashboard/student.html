@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-glass py-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h2 m-0">Student Dashboard</h1>
+                <p class="text-secondary m-0">View your grades, check study recommendations, and download your report card.</p>
+            </div>
+            <div>
+                <a href="{% url 'download_pdf' student.pk %}" class="btn-primary-custom">
+                    Download PDF Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Profile Info -->
+<div class="card-glass mb-4">
+    <h3 class="h5 border-bottom pb-2 mb-3" style="border-color: var(--border-color) !important;">Student Details</h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Student Name</label>
+                <span>{{ student.user.get_full_name|default:student.user.username }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Roll Number</label>
+                <span>{{ student.roll_number|default:"N/A" }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Class / Grade</label>
+                <span>{{ student.class_name }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Department</label>
+                <span>{{ student.department }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics Cards -->
+<div class="dashboard-grid">
+    <div class="metric-card cyan">
+        <div class="metric-info">
+            <h3>Registered Subjects</h3>
+            <div class="value">{{ num_subjects }}</div>
+        </div>
+        <div class="metric-icon">📚</div>
+    </div>
+    <div class="metric-card success">
+        <div class="metric-info">
+            <h3>Avg Attendance</h3>
+            <div class="value">{{ avg_attendance }}%</div>
+        </div>
+        <div class="metric-icon">⏰</div>
+    </div>
+    <div class="metric-card warning">
+        <div class="metric-info">
+            <h3>Passing Courses</h3>
+            <div class="value">{{ pass_count }} / {{ num_subjects }}</div>
+        </div>
+        <div class="metric-icon">🧠</div>
+    </div>
+</div>
+
+<!-- Charts & AI Panel -->
+<div class="charts-row">
+    <!-- Performance Line Chart -->
+    <div class="card-glass m-0">
+        <h3 class="h5 mb-3">Performance Trends</h3>
+        <div class="chart-container-custom">
+            <canvas id="studentPerformanceChart" 
+                    data-subjects='{{ chart_subjects|safe }}'
+                    data-mids='{{ chart_mid_marks|safe }}'
+                    data-assigns='{{ chart_assign_marks|safe }}'></canvas>
+        </div>
+    </div>
+    
+    <!-- AI Recommendations -->
+    <div class="card-glass m-0 d-flex flex-column justify-content-between">
+        <div>
+            <h3 class="h5 mb-3">AI Support Engine</h3>
+            <p class="text-secondary small">Predictions are based on your attendance, weekly study hours, and scores.</p>
+            
+            <ul class="ai-recommendation-list p-0 mt-3">
+                {% if avg_attendance < 75.0 %}
+                    <li><b>Attendance Notice</b>: Your average attendance is {{ avg_attendance }}%. Try to keep it above 75% to stay on track.</li>
+                {% else %}
+                    <li><b>Attendance Strength</b>: Your attendance is {{ avg_attendance }}%. Keep showing up!</li>
+                {% endif %}
+                
+                {% if fail_count > 0 %}
+                    <li><b>Class Warning</b>: You are at risk of failing in {{ fail_count }} subject(s). Consider talking to your teacher.</li>
+                {% else %}
+                    <li><b>Good Standing</b>: You are on track to pass all your courses. Keep up the good work!</li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <div class="border-top pt-3 mt-3" style="border-color: var(--border-color) !important;">
+            <span class="text-secondary small">Model: Random Forest</span>
+        </div>
+    </div>
+</div>
+
+<!-- Results Data Table -->
+<div class="card-glass">
+    <h3 class="h5 mb-3">My Grades</h3>
+    <div class="table-responsive-custom">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Attendance</th>
+                    <th>Weekly Study Hrs</th>
+                    <th>Mid-Term (100)</th>
+                    <th>Assignment (100)</th>
+                    <th>Predicted Grade</th>
+                    <th>AI Prediction</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td><b>{{ r.subject.code }}</b> - {{ r.subject.name }}</td>
+                    <td>{{ r.attendance_percentage }}%</td>
+                    <td>{{ r.study_hours }} hrs</td>
+                    <td>{{ r.mid_term_marks }}</td>
+                    <td>{{ r.assignment_marks }}</td>
+                    <td><span class="badge-custom badge-grade-custom">{{ r.predicted_grade }}</span></td>
+                    <td>
+                        {% if r.predicted_status == 'Pass' %}
+                            <span class="badge-custom badge-success-custom">Pass</span>
+                        {% else %}
+                            <span class="badge-custom badge-danger-custom">Fail</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">No results have been uploaded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

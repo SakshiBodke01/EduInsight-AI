@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Upload Marks - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-glass py-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h2 m-0">Upload Grades Sheet</h1>
+                <p class="text-secondary m-0">Import student scores in batch using a CSV template.</p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard' %}" class="btn-secondary-custom">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Form and Dropzone -->
+    <div class="col-lg-8 mb-4 mb-lg-0">
+        <div class="card-glass">
+            <h3 class="h5 mb-4">Upload File</h3>
+            
+            <form method="POST" enctype="multipart/form-data" action="{% url 'upload_csv' %}">
+                {% csrf_token %}
+                
+                <div class="form-group-custom mb-4">
+                    <label for="id_subject" class="form-label-custom">Subject / Course</label>
+                    {{ form.subject }}
+                    <small class="text-muted mt-1">{{ form.subject.help_text }}</small>
+                    {% if form.subject.errors %}
+                        <div class="text-danger fs-6 mt-1">{{ form.subject.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group-custom mb-4">
+                    <label class="form-label-custom mb-2">Upload Data Sheet File</label>
+                    
+                    <!-- Drag and Drop Dropzone -->
+                    <div class="dropzone-container" id="csvDropzone">
+                        <div class="dropzone-icon">☁️</div>
+                        <div class="dropzone-text">
+                            <h3>Drag and drop your spreadsheet here</h3>
+                            <p>or click to select from your files</p>
+                        </div>
+                        <input type="file" name="csv_file" required id="csvFileInput" class="d-none" accept=".csv, .xlsx">
+                    </div>
+                    
+                    {% if form.csv_file.errors %}
+                        <div class="text-danger fs-6 mt-1">{{ form.csv_file.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-primary-custom w-100 py-3 justify-content-center">
+                    Upload and check grades
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Instructions / Sample Sheet details -->
+    <div class="col-lg-4">
+        <div class="card-glass h-100">
+            <h3 class="h5 mb-3">Upload Instructions</h3>
+            <p class="text-secondary small">Please check that your sheet includes the following columns:</p>
+            
+            <ul class="text-secondary small ps-3 mb-4 d-flex flex-column gap-2">
+                <li>Required columns match header names exactly (case-sensitive).</li>
+                <li><b>student_username</b>: Must contain username string (e.g. <i>john_doe</i>). New accounts will be auto-created.</li>
+                <li><b>attendance_percentage</b>: Float value between 0 and 100.</li>
+                <li><b>study_hours</b>: Float weekly average study hours (0 to 168).</li>
+                <li><b>mid_term_marks</b>: Float exam score (0 to 100).</li>
+                <li><b>assignment_marks</b>: Float cumulative assignment evaluation (0 to 100).</li>
+            </ul>
+
+            <div class="border-top border-secondary pt-3 mt-3">
+                <h5 class="h6 mb-2">Need a template?</h5>
+                <p class="text-secondary small mb-3">Download a sample sheet with formatted headers to get started.</p>
+                <a href="/static/sample_grades.csv" download class="btn btn-outline-primary w-100 py-2">
+                    ⬇️ Download Sample CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

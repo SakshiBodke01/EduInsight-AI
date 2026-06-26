@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12 col-md-8 mx-auto">
+        <div class="card-glass py-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h2 m-0">{{ title }}</h1>
+                <p class="text-secondary m-0">Enter or edit student scores. Grade projections will calculate automatically.</p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard' %}" class="btn-secondary-custom">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-8 mx-auto">
+        <div class="card-glass">
+            <form method="POST" action="">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger font-monospace py-2" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_student" class="form-label-custom">Select Student</label>
+                            {{ form.student }}
+                            {% if form.student.errors %}
+                                <div class="text-danger fs-6">{{ form.student.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_subject" class="form-label-custom">Select Subject</label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                                <div class="text-danger fs-6">{{ form.subject.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_attendance_percentage" class="form-label-custom">Attendance Percentage (0-100)</label>
+                            {{ form.attendance_percentage }}
+                            {% if form.attendance_percentage.errors %}
+                                <div class="text-danger fs-6">{{ form.attendance_percentage.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_study_hours" class="form-label-custom">Weekly Study Hours</label>
+                            {{ form.study_hours }}
+                            {% if form.study_hours.errors %}
+                                <div class="text-danger fs-6">{{ form.study_hours.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_mid_term_marks" class="form-label-custom">Mid-Term Marks (0-100)</label>
+                            {{ form.mid_term_marks }}
+                            {% if form.mid_term_marks.errors %}
+                                <div class="text-danger fs-6">{{ form.mid_term_marks.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group-custom mb-3">
+                            <label for="id_assignment_marks" class="form-label-custom">Assignment Marks (0-100)</label>
+                            {{ form.assignment_marks }}
+                            {% if form.assignment_marks.errors %}
+                                <div class="text-danger fs-6">{{ form.assignment_marks.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top border-secondary d-flex gap-2 justify-content-end">
+                    <a href="{% url 'dashboard' %}" class="btn-secondary-custom">
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn-primary-custom">
+                        Save Result & Run Prediction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style custom forms to match the styling system
+    const selects = ['id_student', 'id_subject'];
+    selects.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.className = 'form-select-custom';
+    });
+});
+</script>
+{% endblock %}

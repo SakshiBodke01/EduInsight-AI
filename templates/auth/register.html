@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% block title %}Register - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="card-glass auth-card" style="max-width: 600px;">
+        <div class="auth-header">
+            <h1>Create Account</h1>
+            <p>Create an account to join the grading portal.</p>
+        </div>
+
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger font-monospace py-2" role="alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-custom">
+                        <label for="id_first_name" class="form-label-custom">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="text-danger fs-6">{{ form.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-custom">
+                        <label for="id_last_name" class="form-label-custom">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="text-danger fs-6">{{ form.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group-custom">
+                <label for="id_email" class="form-label-custom">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger fs-6">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-custom">
+                <label for="id_username" class="form-label-custom">Username</label>
+                <input type="text" name="username" required id="id_username" 
+                       class="form-input-custom" placeholder="Choose a username">
+                {% if form.username.errors %}
+                    <div class="text-danger fs-6">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group-custom">
+                        <label for="id_password1" class="form-label-custom">Password</label>
+                        <input type="password" name="password1" required id="id_password1" 
+                               class="form-input-custom" placeholder="••••••••">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group-custom">
+                        <label for="id_password2" class="form-label-custom">Confirm Password</label>
+                        <input type="password" name="password2" required id="id_password2" 
+                               class="form-input-custom" placeholder="••••••••">
+                    </div>
+                </div>
+                {% if form.password1.errors %}
+                    <div class="col-12 text-danger fs-6 mb-3">{{ form.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group-custom">
+                <label for="id_role" class="form-label-custom">Portal Role</label>
+                <select name="role" id="id_role" class="form-select-custom">
+                    <option value="student" {% if form.role.value == 'student' %}selected{% endif %}>Student</option>
+                    <option value="teacher" {% if form.role.value == 'teacher' %}selected{% endif %}>Teacher</option>
+                </select>
+                {% if form.role.errors %}
+                    <div class="text-danger fs-6">{{ form.role.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Student Specific Fields (Shown dynamically) -->
+            <div id="studentFieldsSection" style="display: none; border-top: 1px solid var(--glass-border); padding-top: 1.5rem; margin-top: 1.5rem;">
+                <h5 class="text-info mb-3">Student Details</h5>
+                
+                <div class="form-group-custom">
+                    <label for="id_roll_number" class="form-label-custom">Roll Number</label>
+                    <input type="text" name="roll_number" id="id_roll_number" 
+                           class="form-input-custom" placeholder="e.g. S1024" value="{{ form.roll_number.value|default:'' }}">
+                    {% if form.roll_number.errors %}
+                        <div class="text-danger fs-6">{{ form.roll_number.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group-custom">
+                            <label for="id_class_name" class="form-label-custom">Class / Grade</label>
+                            <input type="text" name="class_name" id="id_class_name" 
+                                   class="form-input-custom" value="{{ form.class_name.value|default:'Class A' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-custom">
+                            <label for="id_department" class="form-label-custom">Department / Major</label>
+                            <input type="text" name="department" id="id_department" 
+                                   class="form-input-custom" value="{{ form.department.value|default:'Data Science' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary-custom w-100 mt-4 py-3 justify-content-center">
+                Register
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-muted m-0">Already have an account? <a href="{% url 'login' %}">Sign In here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSelect = document.getElementById('id_role');
+    const studentFields = document.getElementById('studentFieldsSection');
+    
+    // Set standard class attributes for Django inputs
+    const inputs = ['id_first_name', 'id_last_name', 'id_email'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.className = 'form-input-custom';
+    });
+
+    function toggleStudentFields() {
+        if (roleSelect.value === 'student') {
+            studentFields.style.display = 'block';
+            document.getElementById('id_roll_number').required = true;
+        } else {
+            studentFields.style.display = 'none';
+            document.getElementById('id_roll_number').required = false;
+        }
+    }
+    
+    roleSelect.addEventListener('change', toggleStudentFields);
+    toggleStudentFields(); // Run initially
+});
+</script>
+{% endblock %}

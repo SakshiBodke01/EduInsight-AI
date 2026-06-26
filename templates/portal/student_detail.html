@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Student Report - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-glass py-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h2 m-0">Student Report Card</h1>
+                <p class="text-secondary m-0">Detailed view of grades, attendance, and study recommendations.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'dashboard' %}" class="btn-secondary-custom">
+                    Back to Dashboard
+                </a>
+                <a href="{% url 'download_pdf' student.pk %}" class="btn-primary-custom">
+                    Download PDF Card
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Demographics -->
+<div class="card-glass mb-4">
+    <h3 class="h5 border-bottom pb-2 mb-3" style="border-color: var(--border-color) !important;">Student Details</h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Student Name</label>
+                <span>{{ student.user.get_full_name|default:student.user.username }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Roll Number</label>
+                <span>{{ student.roll_number|default:"N/A" }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Class / Grade</label>
+                <span>{{ student.class_name }}</span>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="student-detail-item">
+                <label>Department</label>
+                <span>{{ student.department }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Aggregate Metrics Cards -->
+<div class="dashboard-grid">
+    <div class="metric-card cyan">
+        <div class="metric-info">
+            <h3>Registered Subjects</h3>
+            <div class="value">{{ num_subjects }}</div>
+        </div>
+        <div class="metric-icon">📚</div>
+    </div>
+    <div class="metric-card success">
+        <div class="metric-info">
+            <h3>Average Attendance</h3>
+            <div class="value">{{ avg_attendance }}%</div>
+        </div>
+        <div class="metric-icon">⏰</div>
+    </div>
+    <div class="metric-card warning">
+        <div class="metric-info">
+            <h3>Passing Courses</h3>
+            <div class="value">{{ pass_count }} / {{ num_subjects }}</div>
+        </div>
+        <div class="metric-icon">🧠</div>
+    </div>
+</div>
+
+<!-- Results transcript list -->
+<div class="card-glass">
+    <h3 class="h5 mb-3">Student Grades</h3>
+    <div class="table-responsive-custom">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Attendance</th>
+                    <th>Study Hrs</th>
+                    <th>Mid-Term (100)</th>
+                    <th>Assignment (100)</th>
+                    <th>Predicted Grade</th>
+                    <th>AI Status</th>
+                    {% if user.role == 'teacher' or user.role == 'admin' %}
+                        <th class="text-center">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td><b>{{ r.subject.code }}</b> - {{ r.subject.name }}</td>
+                    <td>{{ r.attendance_percentage }}%</td>
+                    <td>{{ r.study_hours }} hrs</td>
+                    <td>{{ r.mid_term_marks }}</td>
+                    <td>{{ r.assignment_marks }}</td>
+                    <td><span class="badge-custom badge-grade-custom">{{ r.predicted_grade }}</span></td>
+                    <td>
+                        {% if r.predicted_status == 'Pass' %}
+                            <span class="badge-custom badge-success-custom">Pass</span>
+                        {% else %}
+                            <span class="badge-custom badge-danger-custom">Fail</span>
+                        {% endif %}
+                    </td>
+                    {% if user.role == 'teacher' or user.role == 'admin' %}
+                        <td class="text-center">
+                            <a href="{% url 'edit_result' r.pk %}" class="btn btn-sm btn-outline-primary py-1 px-3">
+                                Edit Marks
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">No results have been uploaded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- AI Recommendation Panel -->
+<div class="ai-recommendation-panel">
+    <div class="ai-header">
+        <span>🧠</span> AI Recommendations
+    </div>
+    <ul class="ai-recommendation-list p-0 m-0">
+        {% if avg_attendance < 75.0 %}
+            <li><b>Attendance Notice</b>: This student's average attendance is {{ avg_attendance }}%. Try to encourage more class participation.</li>
+        {% else %}
+            <li><b>Good Attendance</b>: This student keeps a solid attendance rate of {{ avg_attendance }}%.</li>
+        {% endif %}
+
+        {% if avg_mid_term < 60.0 or avg_assignment < 60.0 %}
+            <li><b>Study Assistance</b>: Average mid-term ({{ avg_mid_term }}) or assignment score ({{ avg_assignment }}) indicates areas where the student could use extra study support.</li>
+        {% else %}
+            <li><b>Steady Progress</b>: Grades are stable. Keeping this pace should secure passing grades.</li>
+        {% endif %}
+
+        {% if fail_count > 0 %}
+            <li><b>Risk Warning</b>: AI predicts a failing outcome in {{ fail_count }} course(s). Academic support is recommended.</li>
+        {% else %}
+            <li><b>On Track</b>: The student is projected to pass all courses.</li>
+        {% endif %}
+    </ul>
+</div>
+{% endblock %}

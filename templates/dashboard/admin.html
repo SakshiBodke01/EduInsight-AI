@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard - EduInsight AI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card-glass py-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="h2 m-0">Admin Dashboard</h1>
+                <p class="text-secondary m-0">Manage accounts, configure system tables, and view database statistics.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'seed_demo_data' %}" class="btn btn-outline-primary py-2 px-3 align-items-center d-inline-flex">
+                    🧪 Seed Demo Data
+                </a>
+                <a href="/admin/" target="_blank" class="btn-primary-custom">
+                    Open Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Metrics overview -->
+<div class="dashboard-grid">
+    <div class="metric-card cyan">
+        <div class="metric-info">
+            <h3>Total Registered Users</h3>
+            <div class="value">{{ users_count }}</div>
+        </div>
+        <div class="metric-icon">👤</div>
+    </div>
+    <div class="metric-card success">
+        <div class="metric-info">
+            <h3>Registered Teachers</h3>
+            <div class="value">{{ teachers_count }}</div>
+        </div>
+        <div class="metric-icon">👨‍🏫</div>
+    </div>
+    <div class="metric-card warning">
+        <div class="metric-info">
+            <h3>Registered Students</h3>
+            <div class="value">{{ students_count }}</div>
+        </div>
+        <div class="metric-icon">🎓</div>
+    </div>
+    <div class="metric-card danger">
+        <div class="metric-info">
+            <h3>Academic Subjects</h3>
+            <div class="value">{{ subjects_count }}</div>
+        </div>
+        <div class="metric-icon">📚</div>
+    </div>
+</div>
+
+<!-- Admin Panel Controls -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card-glass h-100">
+            <h3 class="h5 mb-3">Quick Actions</h3>
+            <p class="text-secondary small">Add records or edit system settings inside the admin dashboard.</p>
+            <div class="d-flex flex-column gap-2 mt-4">
+                <a href="/admin/portal/user/add/" target="_blank" class="btn btn-outline-primary py-2 text-start">
+                    ➕ Create User Account
+                </a>
+                <a href="/admin/portal/subject/add/" target="_blank" class="btn btn-outline-primary py-2 text-start">
+                    ➕ Register New Subject
+                </a>
+                <a href="/admin/portal/result/" target="_blank" class="btn btn-outline-primary py-2 text-start">
+                    ✏️ Inspect Student Results
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card-glass h-100">
+            <h3 class="h5 mb-3">Recent Accounts</h3>
+            <div class="table-responsive-custom mt-3">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Date Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td><b>{{ u.username }}</b></td>
+                            <td>
+                                {% if u.role == 'admin' %}
+                                    <span class="badge-custom badge-danger-custom">Admin</span>
+                                {% elif u.role == 'teacher' %}
+                                    <span class="badge-custom badge-grade-custom">Teacher</span>
+                                {% else %}
+                                    <span class="badge-custom badge-success-custom">Student</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted small">{{ u.date_joined|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

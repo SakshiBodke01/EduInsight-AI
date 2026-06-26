@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}EduInsight AI - Simple Student Grade & Performance Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    
+    <!-- Hero Section -->
+    <section class="hero-wrapper text-center mx-auto" style="max-width: 800px; padding: 4rem 0 3rem 0;">
+        <span class="hero-badge">STUDENT PERFORMANCE PORTAL</span>
+        
+        <h1 class="hero-title">
+            Class performance tracking, <br>
+            <span class="text-primary">made simple.</span>
+        </h1>
+        
+        <p class="hero-subtitle mx-auto">
+            Upload grades, review AI-powered student projections, and export clean PDF report cards. EduInsight AI helps educators track study patterns and assist students who need extra support.
+        </p>
+        
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="btn-primary-custom px-4 py-3 fs-6">
+                    Go to Dashboard <span>→</span>
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-primary-custom px-4 py-3 fs-6">
+                    Enter Portal <span>→</span>
+                </a>
+                <a href="#demo-accounts" class="btn-secondary-custom px-4 py-3 fs-6">
+                    Seeded Demo Accounts
+                </a>
+            {% endif %}
+            <a href="/api/analytics/" target="_blank" class="btn-secondary-custom px-4 py-3 fs-6">
+                Inspect REST API
+            </a>
+        </div>
+    </section>
+
+    <!-- Linear Narrative Flow (How It Works) -->
+    <section class="py-5 border-top" style="border-color: var(--border-color) !important;">
+        <div class="text-center mb-5">
+            <h2 class="h3 text-white">How it works in 3 steps</h2>
+            <p class="text-secondary mx-auto" style="max-width: 500px;">
+                EduInsight AI keeps student evaluation and support tracking straightforward.
+            </p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-card h-100">
+                    <span class="feature-step-num">01</span>
+                    <div class="feature-icon-wrapper mb-3">📥</div>
+                    <h3>Upload Class Scores</h3>
+                    <p>
+                        Import student results in batch using a simple CSV template. EduInsight parses names, attendance percentages, and test scores on the fly.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="feature-card h-100">
+                    <span class="feature-step-num">02</span>
+                    <div class="feature-icon-wrapper mb-3">🧠</div>
+                    <h3>AI Performance Check</h3>
+                    <p>
+                        A trained predictive model reviews study hours and attendance rates to flag warning signs and project student grade categories.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="feature-card h-100">
+                    <span class="feature-step-num">03</span>
+                    <div class="feature-icon-wrapper mb-3">📄</div>
+                    <h3>Export Report Cards</h3>
+                    <p>
+                        Review class-wide performance graphs, explore detail sheets, and compile signed PDF report cards with one click.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seeded Accounts & Mobile First Info -->
+    <section class="row py-5 border-top align-items-stretch" style="border-color: var(--border-color) !important;" id="demo-accounts">
+        <!-- Human Description Column -->
+        <div class="col-lg-6 mb-4 mb-lg-0 d-flex flex-column justify-content-center pr-lg-5">
+            <h2 class="h3 mb-3">Try out all role perspectives</h2>
+            <p class="text-secondary mb-4">
+                We pre-loaded standard academic subjects, classes, and marks so you can test role permissions instantly.
+            </p>
+            
+            <div class="d-flex flex-column gap-3">
+                <div class="d-flex gap-3 align-items-start">
+                    <div class="fs-5 text-primary">✓</div>
+                    <div>
+                        <h6 class="m-0 fw-bold">Faculty Access</h6>
+                        <p class="text-secondary small m-0">Upload spreadsheets, edit marks, re-seed database metrics, and check class performance graphs.</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-3 align-items-start">
+                    <div class="fs-5 text-primary">✓</div>
+                    <div>
+                        <h6 class="m-0 fw-bold">Student Log</h6>
+                        <p class="text-secondary small m-0">Review grades, inspect personalized analytics, and download official PDF report cards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Credentials Table Column -->
+        <div class="col-lg-6 d-flex">
+            <div class="demo-account-card w-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h4 class="h5 mb-2">Default Demo Logins</h4>
+                    <p class="text-secondary small mb-3">Select a role to sign in and review dashboards:</p>
+                    
+                    <div class="table-responsive-custom mb-3">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Portal Role</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge-custom badge-grade-custom">Teacher / Faculty</span></td>
+                                    <td><span class="font-monospace fw-bold">teacher</span></td>
+                                    <td><code class="text-primary font-monospace">teacher123</code></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge-custom badge-success-custom">Student Profile</span></td>
+                                    <td><span class="font-monospace fw-bold">student</span></td>
+                                    <td><code class="text-success font-monospace">student123</code></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge-custom badge-danger-custom">System Admin</span></td>
+                                    <td><span class="font-monospace fw-bold">admin</span></td>
+                                    <td><code class="text-danger font-monospace">admin123</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{% url 'login' %}" class="btn-primary-custom w-100 justify-content-center py-3">
+                        🔓 Launch Portal Login Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

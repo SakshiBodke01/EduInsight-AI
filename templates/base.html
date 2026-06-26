@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-Powered Student Result & Performance Analytics Portal">
+    <title>{% block title %}EduInsight AI{% endblock %}</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <!-- Custom Design CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Django Message Toasts Container -->
+    {% if messages %}
+    <div class="messages-container" id="toastContainer">
+        {% for message in messages %}
+        <div class="alert-custom {% if message.tags %}{{ message.tags }}{% else %}info{% endif %}" role="alert">
+            <span>{{ message }}</span>
+            <button type="button" class="alert-close" aria-label="Close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar-custom">
+        <div class="brand-container">
+            <a href="{% url 'landing' %}" class="brand-container">
+                <div class="brand-logo-icon">EI</div>
+                <div class="brand-name">EduInsight AI</div>
+            </a>
+        </div>
+        
+        <ul class="nav-links m-0 p-0">
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}" class="nav-link-item active">Dashboard</a></li>
+                {% if user.role == 'teacher' %}
+                    <li><a href="{% url 'upload_csv' %}" class="nav-link-item">Upload Marks</a></li>
+                    <li><a href="{% url 'add_result' %}" class="nav-link-item">Add Result</a></li>
+                {% endif %}
+                <li><span class="text-muted px-2">|</span></li>
+                <li><span class="text-secondary fs-6 font-monospace">Hello, {{ user.username }} ({{ user.role|title }})</span></li>
+                <li><a href="{% url 'logout' %}" class="btn-danger-custom py-2 px-3 fs-6">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}" class="nav-link-item">Login</a></li>
+                <li><a href="{% url 'register' %}" class="btn-primary-custom py-2 px-3">Register</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="footer-custom">
+        <div class="container text-center">
+            <p class="mb-1">&copy; 2026 EduInsight AI. All rights reserved.</p>
+            <p class="m-0 text-white-50">Powered by Django, scikit-learn, and ReportLab PDF Compiler.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/charts.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
