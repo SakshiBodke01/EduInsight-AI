@@ -61,7 +61,7 @@ Visit the portal locally at [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 | **Teacher** | `teacher` | `teacher123` | Upload student grade CSVs, add/edit single results, view class-wide performance graphs. |
 | **Student (Default)** | `student` | `student123` | View transcript grades (assigned to **Rohan Deshmukh**), check personal performance curve, review AI recommendations, and download PDF. |
 
-### Seeded Mock Student Logins (Marathi Names)
+### Seeded Mock Student Logins 
 - **Snehal Patil**: `snehal_patil` / `snehal_patil123`
 - **Aditya Joshi**: `aditya_joshi` / `aditya_joshi123`
 - **Aniket Kulkarni**: `aniket_kulkarni` / `aniket_kulkarni123`
