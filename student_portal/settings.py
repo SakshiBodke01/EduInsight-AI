@@ -74,17 +74,7 @@ DATABASES = {
 }
 
 # Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 6,
-        }
-    },
-]
+AUTH_PASSWORD_VALIDATORS = []
 
 # Custom User Model
 AUTH_USER_MODEL = 'portal.User'
