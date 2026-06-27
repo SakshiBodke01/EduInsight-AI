@@ -2,6 +2,10 @@
 
 EduInsight AI is a modern, responsive web application built with Django that empowers educators, administrators, and students with student result tracking and analytics. Using a machine learning pipeline (scikit-learn Random Forest model), it predicts final grades and student pass/fail risk status in real-time based on study hours, attendance, assignments, and mid-term marks.
 
+### 🌐 Live Deployment
+The application is deployed on Vercel and can be accessed live at:
+👉 **[https://edu-insight-ai-six.vercel.app/](https://edu-insight-ai-six.vercel.app/)**
+
 ---
 
 ## 🚀 Features
