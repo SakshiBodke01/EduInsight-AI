@@ -61,10 +61,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'student_portal.wsgi.application'
 
 # Database
+if os.environ.get('VERCEL'):
+    DATABASE_PATH = '/tmp/db.sqlite3'
+else:
+    DATABASE_PATH = BASE_DIR / 'db.sqlite3'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DATABASE_PATH,
     }
 }
 
